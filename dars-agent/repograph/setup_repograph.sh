@@ -38,10 +38,11 @@ if [ -f "$ZIP_FILE" ]; then
         
         # Run additional scripts
         echo "Creating Graph files using tags_to_graph.py..."
-        python3 "$SCRIPT_DIR/tags_to_graph.py"
+        cd "$SCRIPT_DIR"
+        python3 tags_to_graph.py
         
         echo "Updating tags using update_tags.py..."
-        python3 "$SCRIPT_DIR/update_tags.py"
+        python3 update_tags.py
     else
         echo "Extraction failed. Keeping ZIP file for inspection."
     fi
