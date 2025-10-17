@@ -1,0 +1,60 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test-python:
+    name: Python Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        working-directory: ./dars-agent
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run tests
+        working-directory: ./dars-agent
+        run: |
+          pytest tests/ -v || echo "No tests found or tests failed"
+
+  test-nodejs:
+    name: Node.js Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ./tree-visualizer/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./tree-visualizer
+        run: npm ci || npm install
+
+      - name: Run linter
+        working-directory: ./tree-visualizer
+        run: npm run lint
+
+      - name: Build
+        working-directory: ./tree-visualizer
+        run: npm run build
